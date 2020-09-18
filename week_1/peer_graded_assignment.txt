@@ -11,8 +11,9 @@ Namenode RAM Size = 1562500000B = 1.5625GB
 Average Reading Speed = 60MB/s = 60 000 000 B/s
 Seek Time = 5ms = 0.005s
 0.5% = 0.005
-Minimum Block Size = Average Reading Speed * Seek Time * 0.5%
-0.005 * 60 000 000 * 0.005 = 1500B
+Minimum Block Size / Average Reading Speed *  Time for Seeking the Block >= Seek Time
+X / 60 000 000 * 0.005 >= 0.005
+X = 60 000 000 B = 60MB
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,12 +27,12 @@ read the first 10 lines of the file
 rename it to ‘test2.txt’.
 Provide all the commands to HDFS CLI.
 
-hdfs dfs -mkdir -p /user/jovyan/assignment1
-hdfs dfs -put test.txt /user/jovyan/assignment1
-hdfs dfs -ls -h /user/jovyan/assignment1/test.txt
-hdfs dfs -chmod o-r /user/jovyan/assignment1/test.txt
-hdfs dfs -cat /user/jovyan/assignment1/test.txt | head -10
-hdfs dfs -mv /user/jovyan/assignment1/test.txt /user/jovyan/assignment1/test2.txt
+hdfs dfs -mkdir -p assignment1
+hdfs dfs -put test.txt assignment1
+hdfs dfs -ls assignment1/test.txt
+hdfs dfs -chmod o-r assignment1/test.txt
+hdfs dfs -cat assignment1/test.txt | head -10
+hdfs dfs -mv assignment1/test.txt assignment1/test2.txt
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -39,13 +40,28 @@ hdfs dfs -mv /user/jovyan/assignment1/test.txt /user/jovyan/assignment1/test2.tx
 
 get blocks and their locations in HDFS for this file, show the command without an output
 get the information about any block of the file, show the command and the block locations from the output
-hdfs fsck /data/wiki/en_articles_part/articles-part -blocks -locations
-hdfs fsck -blockId XXXXX ----> here XXXXX is one of the block ids gotten from the above command's output (I am not being able to access the HDFS CLI Playground)
+
+hdfs fsck /data/wiki/en_articles_part/articles-part -files -blocks -locations
+hdfs fsck -blockId blk_1073741828
+
+Connecting to namenode via http://localhost:50070/fsck?ugi=jovyan&blockId=blk_1073741828+&path=%2F
+ FSCK started by jovyan (auth:SIMPLE) from /127.0.0.1 at Fri Sep 18 01:48:56 GMT 2020
+ 
+ Block Id: blk_1073741828
+ Block belongs to: /data/wiki/en_articles_part/articles-part
+ No. of Expected Replica: 1
+ No. of live Replica: 1
+ No. of excess Replica: 0
+ No. of stale Replica: 0
+ No. of decommissioned Replica: 0
+ No. of decommissioning Replica: 0
+ No. of corrupted Replica: 0
+ Block replica on datanode/rack: 172.17.0.46/default-rack is HEALTHY
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 5. Look at the picture of Namenode web interface from a real Hadoop cluster. Show the total capacity of this HDFS installation, used space and total data nodes in the cluster.
 
 Total Capacity: 2.14TB
-Used Space: 242.12GB (11.03%)
+Used Space: 242.12GB + 35.51GB = 277,63GB
 Total Data Nodes: 4
